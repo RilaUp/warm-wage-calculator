@@ -118,10 +118,11 @@ function renderCalendar(days) {
 
     const day = days[i - firstWeekday];
     const button = document.createElement("button");
-    const isWorking = day.workFraction > 0;
+    // A day's nature and its work arrangement are two separate dimensions.
+    // A worked rest day should remain visually identifiable as a rest day.
     const visualType = day.type === "holiday" || day.type === "spring"
       ? "holiday"
-      : day.type === "rest" && !isWorking ? "rest" : "work";
+      : day.type === "rest" ? "rest" : "work";
     button.type = "button";
     button.className = `day-cell is-${visualType}${state.selectedISO === day.iso ? " is-selected" : ""}`;
     button.dataset.iso = day.iso;
@@ -133,8 +134,10 @@ function renderCalendar(days) {
 
     const label = day.type === "spring" || day.type === "holiday"
       ? day.name
-      : day.type === "rest" && !isWorking ? "休息" : "工作";
-    const workBadge = day.workFraction === 0.5 ? "半天" : day.workFraction === 1 && (day.type === "holiday" || day.type === "spring" || day.type === "rest") ? "工作" : "";
+      : day.type === "rest" ? "休息" : "工作";
+    const workBadge = day.workFraction === 0.5
+      ? "工作半天"
+      : day.workFraction === 1 && day.type !== "regular" ? "工作一天" : "";
 
     button.innerHTML = `
       <span class="day-number">${day.day}</span>

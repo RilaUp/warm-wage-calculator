@@ -559,6 +559,10 @@ button.day-cell:hover {
   background: rgba(247, 243, 234, 0.45);
 }
 
+.adjust-empty[hidden] {
+  display: none;
+}
+
 .adjust-empty span {
   font-size: 24px;
 }
