@@ -8,7 +8,7 @@
       name="description"
       content="按月薪 ÷ 26、合同休息日与中国大陆法定节假日计算劳务报酬。"
     />
-    <title>暖薪 · 家庭劳务工资计算器</title>
+    <title>暖薪 · 工资计算器</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -24,24 +24,20 @@
           <span class="brand-mark" aria-hidden="true">暖</span>
           <span>
             <strong>暖薪</strong>
-            <small>家庭劳务工资计算器</small>
+            <small>工资计算器</small>
           </span>
         </a>
-        <span class="contract-chip">按合同约定计算</span>
+        <span class="contract-chip">月薪 ÷ 26</span>
       </header>
 
       <main>
         <section class="intro">
           <div>
-            <p class="eyebrow">每一天都算得清楚，也说得温柔</p>
-            <h1>这个月，应该支付多少？</h1>
+            <p class="eyebrow">暖薪 · 工资计算器</p>
+            <h1>算清每一天，安心确认这笔报酬</h1>
             <p class="intro-copy">
-              选择月份，再告诉我们哪些日子工作、休息或只工作半天。法定放假日已按合同规则预置。
+              选好月份与每天的安排，金额、月历和公式会同步更新。
             </p>
-          </div>
-          <div class="formula-stamp" aria-label="日工资公式">
-            <span>日劳务报酬</span>
-            <strong>月薪 ÷ 26</strong>
           </div>
         </section>
 
@@ -49,7 +45,7 @@
           <div class="section-heading">
             <div>
               <p class="step-label">01 · 基础约定</p>
-              <h2 id="settings-title">先确认这个月</h2>
+              <h2 id="settings-title">月份与约定</h2>
             </div>
             <button class="text-button" id="reset-month" type="button">恢复本月预设</button>
           </div>
@@ -102,6 +98,7 @@
             <span class="result-kicker" id="result-period">2026 年 7 月建议支付</span>
             <strong class="result-amount" id="result-amount">¥0.00</strong>
             <span class="result-note" id="result-note">每一笔都可在下方公式中核对</span>
+            <button class="share-trigger" id="share-trigger" type="button">生成确认图</button>
           </div>
           <div class="result-metrics">
             <div>
@@ -167,9 +164,8 @@
           <div id="adjust-controls" class="adjust-controls" hidden>
             <fieldset>
               <legend>这一天是什么日子？</legend>
-              <div class="segmented four" id="day-type-controls">
+              <div class="segmented three" id="day-type-controls">
                 <button type="button" data-type="regular">普通日</button>
-                <button type="button" data-type="rest">休息日</button>
                 <button type="button" data-type="holiday">其他法定日</button>
                 <button type="button" data-type="spring">春节法定日</button>
               </div>
@@ -257,6 +253,25 @@
           </div>
         </section>
       </main>
+
+      <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-dialog-title">
+        <div class="share-dialog-header">
+          <div>
+            <p class="step-label">可直接转发</p>
+            <h2 id="share-dialog-title">工资确认图</h2>
+          </div>
+          <button class="dialog-close" id="share-close" type="button" aria-label="关闭确认图">关闭</button>
+        </div>
+        <p class="share-dialog-copy">图片包含实际支付金额、整月日历和完整计算公式。</p>
+        <div class="share-preview">
+          <canvas id="share-canvas" aria-label="工资确认图预览"></canvas>
+        </div>
+        <p class="share-status" id="share-status" aria-live="polite"></p>
+        <div class="share-dialog-actions">
+          <button class="secondary-button" id="share-download" type="button">下载 PNG</button>
+          <button class="primary-button" id="share-copy" type="button">复制图片</button>
+        </div>
+      </dialog>
 
       <footer>
         <p>让安排清楚，让相处轻松。</p>

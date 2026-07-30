@@ -19,10 +19,19 @@ test("Friday is the default rest day while any other weekday can work", () => {
   const days = buildMonthDays(2026, 7, 5);
   const friday = days.find((day) => day.iso === "2026-07-03");
   const saturday = days.find((day) => day.iso === "2026-07-04");
-  assert.equal(friday.type, "rest");
+  assert.equal(friday.type, "regular");
   assert.equal(friday.workFraction, 0);
   assert.equal(saturday.type, "regular");
   assert.equal(saturday.workFraction, 1);
+});
+
+test("legacy rest-day overrides migrate to regular day plus rest arrangement", () => {
+  const days = buildMonthDays(2026, 7, 5, {
+    "2026-07-28": { type: "rest", name: "休息日", workFraction: 0 }
+  });
+  const migrated = days.find((day) => day.iso === "2026-07-28");
+  assert.equal(migrated.type, "regular");
+  assert.equal(migrated.workFraction, 0);
 });
 
 test("total multipliers follow x1, x2 and x3 rule", () => {

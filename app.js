@@ -3,19 +3,13 @@ import {
   calculateMonth,
   getDayPaidEquivalent
 } from "./calc.mjs";
+import { renderShareImage } from "./share-image.mjs";
 
 const monthNames = [
   "一月", "二月", "三月", "四月", "五月", "六月",
   "七月", "八月", "九月", "十月", "十一月", "十二月"
 ];
 const weekdayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-const typeLabels = {
-  regular: "普通日",
-  rest: "休息日",
-  holiday: "其他法定日",
-  spring: "春节法定日"
-};
-
 const elements = {
   year: document.querySelector("#year-select"),
   month: document.querySelector("#month-select"),
@@ -41,7 +35,14 @@ const elements = {
   regularBreakdown: document.querySelector("#regular-breakdown"),
   leaveBreakdown: document.querySelector("#leave-breakdown"),
   holidayBreakdown: document.querySelector("#holiday-breakdown"),
-  springBreakdown: document.querySelector("#spring-breakdown")
+  springBreakdown: document.querySelector("#spring-breakdown"),
+  shareTrigger: document.querySelector("#share-trigger"),
+  shareDialog: document.querySelector("#share-dialog"),
+  shareCanvas: document.querySelector("#share-canvas"),
+  shareClose: document.querySelector("#share-close"),
+  shareCopy: document.querySelector("#share-copy"),
+  shareDownload: document.querySelector("#share-download"),
+  shareStatus: document.querySelector("#share-status")
 };
 
 const current = new Date();
@@ -118,11 +119,9 @@ function renderCalendar(days) {
 
     const day = days[i - firstWeekday];
     const button = document.createElement("button");
-    // A day's nature and its work arrangement are two separate dimensions.
-    // A worked rest day should remain visually identifiable as a rest day.
     const visualType = day.type === "holiday" || day.type === "spring"
       ? "holiday"
-      : day.type === "rest" ? "rest" : "work";
+      : Number(day.workFraction) === 0 ? "rest" : "work";
     button.type = "button";
     button.className = `day-cell is-${visualType}${state.selectedISO === day.iso ? " is-selected" : ""}`;
     button.dataset.iso = day.iso;
@@ -134,10 +133,10 @@ function renderCalendar(days) {
 
     const label = day.type === "spring" || day.type === "holiday"
       ? day.name
-      : day.type === "rest" ? "休息" : "工作";
+      : Number(day.workFraction) === 0 ? "休息" : "工作";
     const workBadge = day.workFraction === 0.5
       ? "工作半天"
-      : day.workFraction === 1 && day.type !== "regular" ? "工作一天" : "";
+      : day.workFraction === 1 && (day.type === "holiday" || day.type === "spring") ? "工作一天" : "";
 
     button.innerHTML = `
       <span class="day-number">${day.day}</span>
@@ -194,8 +193,10 @@ function renderAdjust(days) {
     elements.adjustExplanation.textContent = `法定带薪 1 份 + 工作增量 ${formatNumber(selected.workFraction)} 份 = 当天共 ${formatNumber(equivalent)} 份。`;
   } else if (selected.type === "spring") {
     elements.adjustExplanation.textContent = `春节带薪 1 份 + 工作增量 ${formatNumber(selected.workFraction)} ×2 = 当天共 ${formatNumber(equivalent)} 份。`;
+  } else if (Number(selected.workFraction) === 0) {
+    elements.adjustExplanation.textContent = "今天安心休息，不计入本月计薪份额。";
   } else {
-    elements.adjustExplanation.textContent = `${typeLabels[selected.type]}按实际工作份额计算：当天共 ${formatNumber(equivalent)} 份。`;
+    elements.adjustExplanation.textContent = `普通日按实际工作安排计算：当天共 ${formatNumber(equivalent)} 份。`;
   }
 }
 
@@ -210,9 +211,7 @@ function updateSelected(patch) {
       ? "春节法定日"
       : next.type === "holiday"
         ? "法定节日"
-        : next.type === "rest"
-          ? "休息日"
-          : "工作日",
+        : "普通日",
     workFraction: Number(next.workFraction)
   };
   saveOverrides();
@@ -242,6 +241,53 @@ function renderNotice() {
   }
   elements.notice.hidden = false;
   elements.notice.innerHTML = `<strong>${state.year} 年提示</strong>　农历法定日已按历法预置；年度调休通知尚未作为计薪依据，您可以逐日调整。`;
+}
+
+async function openShareDialog() {
+  elements.shareStatus.textContent = "";
+  if (document.fonts?.ready) await document.fonts.ready;
+  const days = getDays();
+  const result = calculateMonth({ salary: state.salary, days });
+  renderShareImage({
+    canvas: elements.shareCanvas,
+    year: state.year,
+    month: state.month,
+    salary: state.salary,
+    days,
+    result
+  });
+  elements.shareDialog.showModal();
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob);
+      else reject(new Error("图片生成失败"));
+    }, "image/png");
+  });
+}
+
+function downloadShareImage() {
+  const link = document.createElement("a");
+  link.download = `暖薪-${state.year}年${state.month}月-工资确认.png`;
+  link.href = elements.shareCanvas.toDataURL("image/png");
+  link.click();
+  elements.shareStatus.textContent = "确认图已下载。";
+}
+
+async function copyShareImage() {
+  elements.shareStatus.textContent = "正在复制…";
+  try {
+    if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
+      throw new Error("clipboard-not-supported");
+    }
+    const blob = await canvasToBlob(elements.shareCanvas);
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    elements.shareStatus.textContent = "图片已复制，可以直接粘贴给对方。";
+  } catch {
+    elements.shareStatus.textContent = "当前浏览器不允许直接复制，请使用“下载 PNG”。";
+  }
 }
 
 function render() {
@@ -292,6 +338,14 @@ elements.typeControls.addEventListener("click", (event) => {
 elements.fractionControls.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-fraction]");
   if (button) updateSelected({ workFraction: Number(button.dataset.fraction) });
+});
+
+elements.shareTrigger.addEventListener("click", openShareDialog);
+elements.shareClose.addEventListener("click", () => elements.shareDialog.close());
+elements.shareCopy.addEventListener("click", copyShareImage);
+elements.shareDownload.addEventListener("click", downloadShareImage);
+elements.shareDialog.addEventListener("click", (event) => {
+  if (event.target === elements.shareDialog) elements.shareDialog.close();
 });
 
 initSelectors();

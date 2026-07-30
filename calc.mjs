@@ -80,16 +80,21 @@ export function buildMonthDays(year, month, restWeekday = 5, overrides = {}) {
     const initial = holiday
       ? { type: holiday.type, name: holiday.name, workFraction: 0 }
       : weekday === Number(restWeekday)
-        ? { type: "rest", name: "每周休息", workFraction: 0 }
+        ? { type: "regular", name: "普通日", workFraction: 0 }
         : { type: "regular", name: "工作日", workFraction: 1 };
     const override = overrides[iso] || {};
+    const normalizedOverride = {
+      ...override,
+      // Backward compatibility for choices saved by the previous UI.
+      ...(override.type === "rest" ? { type: "regular", name: "普通日" } : {})
+    };
 
     days.push({
       iso,
       day,
       weekday,
       ...initial,
-      ...override
+      ...normalizedOverride
     });
   }
 
