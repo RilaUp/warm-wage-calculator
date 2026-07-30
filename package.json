@@ -2,6 +2,9 @@
   "name": "warm-wage-calculator",
   "version": "1.0.0",
   "private": true,
+  "description": "A bilingual, privacy-friendly salary calculator for household workers and employers.",
+  "license": "MIT",
+  "homepage": "https://salary-calculator-red.vercel.app",
   "type": "module",
   "scripts": {
     "test": "node --test",
