@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f3ea" />
+    <meta
+      name="description"
+      content="按月薪 ÷ 26、合同休息日与中国大陆法定节假日计算劳务报酬。"
+    />
+    <title>暖薪 · 工资计算器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/salary-calculator" aria-label="回到工资计算器页面顶部">
+          <span class="brand-mark" aria-hidden="true">暖</span>
+          <span>
+            <strong>暖薪</strong>
+            <small>工资计算器</small>
+          </span>
+        </a>
+        <span class="contract-chip">月薪 ÷ 26</span>
+      </header>
+
+      <main>
+        <section class="intro">
+          <div>
+            <p class="eyebrow">暖薪 · 工资计算器</p>
+            <h1>算清每一天，安心确认这笔报酬</h1>
+            <p class="intro-copy">
+              选好月份与每天的安排，金额、月历和公式会同步更新。
+            </p>
+          </div>
+        </section>
+
+        <section class="control-card" aria-labelledby="settings-title">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">01 · 基础约定</p>
+              <h2 id="settings-title">月份与约定</h2>
+            </div>
+            <button class="text-button" id="reset-month" type="button">恢复本月预设</button>
+          </div>
+
+          <div class="control-grid">
+            <label class="field">
+              <span>年份</span>
+              <select id="year-select">
+                <option value="2026">2026 年</option>
+                <option value="2027">2027 年</option>
+                <option value="2028">2028 年</option>
+                <option value="2029">2029 年</option>
+                <option value="2030">2030 年</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>月份</span>
+              <select id="month-select"></select>
+            </label>
+            <label class="field">
+              <span>每月劳务报酬</span>
+              <span class="input-shell">
+                <span>¥</span>
+                <input id="salary-input" type="number" min="0" step="100" value="12000" inputmode="decimal" />
+              </span>
+            </label>
+            <label class="field">
+              <span>每周默认休息日</span>
+              <select id="rest-day-select">
+                <option value="0">星期日</option>
+                <option value="1">星期一</option>
+                <option value="2">星期二</option>
+                <option value="3">星期三</option>
+                <option value="4">星期四</option>
+                <option value="5" selected>星期五</option>
+                <option value="6">星期六</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="rule-strip" aria-label="计薪规则">
+            <span><i class="rule-dot regular"></i>普通日 / 周休息日工作 <strong>共 ×1</strong></span>
+            <span><i class="rule-dot holiday"></i>其他法定日工作 <strong>共 ×2</strong></span>
+            <span><i class="rule-dot spring"></i>春节法定日工作 <strong>共 ×3</strong></span>
+          </div>
+        </section>
+
+        <section class="result-card" aria-live="polite">
+          <div class="result-main">
+            <span class="result-kicker" id="result-period">2026 年 7 月建议支付</span>
+            <strong class="result-amount" id="result-amount">¥0.00</strong>
+            <span class="result-note" id="result-note">每一笔都可在下方公式中核对</span>
+            <button class="share-trigger" id="share-trigger" type="button">生成确认图</button>
+          </div>
+          <div class="result-metrics">
+            <div>
+              <span>日劳务报酬</span>
+              <strong id="daily-rate">¥0.00</strong>
+            </div>
+            <div>
+              <span>计薪份额</span>
+              <strong id="paid-equivalents">0 天</strong>
+            </div>
+            <div>
+              <span>法定日增量</span>
+              <strong id="premium-equivalents">0 天</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="calendar-card" aria-labelledby="calendar-title">
+          <div class="section-heading calendar-heading">
+            <div>
+              <p class="step-label">02 · 一起看看每天</p>
+              <h2 id="calendar-title">月历</h2>
+            </div>
+            <div class="legend" aria-label="月历图例">
+              <span><i class="legend-swatch work"></i>工作日</span>
+              <span><i class="legend-swatch holiday"></i>法定节日</span>
+              <span><i class="legend-swatch rest"></i>休息日</span>
+            </div>
+          </div>
+
+          <div id="year-notice" class="notice" hidden></div>
+
+          <div class="calendar-scroll">
+            <div class="calendar" role="grid" aria-label="工资计算月历">
+              <div class="weekday" role="columnheader">日</div>
+              <div class="weekday" role="columnheader">一</div>
+              <div class="weekday" role="columnheader">二</div>
+              <div class="weekday" role="columnheader">三</div>
+              <div class="weekday" role="columnheader">四</div>
+              <div class="weekday" role="columnheader">五</div>
+              <div class="weekday" role="columnheader">六</div>
+              <div id="calendar-days" class="calendar-days"></div>
+            </div>
+          </div>
+
+          <p class="calendar-help">点选任意一天，在下方调整当天性质和工作份额。</p>
+        </section>
+
+        <section class="adjust-card" id="adjust-card" aria-labelledby="adjust-title">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">03 · 灵活调整</p>
+              <h2 id="adjust-title">选一天来调整</h2>
+            </div>
+            <span class="selected-date" id="selected-date">请先点选月历日期</span>
+          </div>
+
+          <div id="adjust-empty" class="adjust-empty">
+            <span aria-hidden="true">↖</span>
+            <p>月历里的每一天都可以单独调整，也支持半天工作。</p>
+          </div>
+
+          <div id="adjust-controls" class="adjust-controls" hidden>
+            <fieldset>
+              <legend>这一天是什么日子？</legend>
+              <div class="segmented three" id="day-type-controls">
+                <button type="button" data-type="regular">普通日</button>
+                <button type="button" data-type="holiday">其他法定日</button>
+                <button type="button" data-type="spring">春节法定日</button>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>当天的工作安排</legend>
+              <div class="segmented three" id="work-fraction-controls">
+                <button type="button" data-fraction="0">安心放假</button>
+                <button type="button" data-fraction="0.5">工作半天</button>
+                <button type="button" data-fraction="1">工作一天</button>
+              </div>
+            </fieldset>
+            <p class="adjust-explanation" id="adjust-explanation"></p>
+          </div>
+        </section>
+
+        <section class="breakdown-card" aria-labelledby="breakdown-title">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">04 · 公式与明细</p>
+              <h2 id="breakdown-title">这笔报酬怎么算</h2>
+            </div>
+          </div>
+
+          <div class="formula-box">
+            <div>
+              <span>日劳务报酬</span>
+              <code id="daily-formula">¥12,000 ÷ 26 = ¥461.54</code>
+            </div>
+            <span class="formula-operator">×</span>
+            <div>
+              <span>本月计薪份额</span>
+              <code id="equivalent-formula">0 天</code>
+            </div>
+            <span class="formula-operator">=</span>
+            <div class="formula-total">
+              <span>建议支付</span>
+              <code id="total-formula">¥0.00</code>
+            </div>
+          </div>
+
+          <div class="breakdown-grid">
+            <div class="breakdown-row">
+              <span><i class="mini-icon regular"></i>普通日及休息日工作</span>
+              <span id="regular-breakdown">0 ×1 = 0 天</span>
+            </div>
+            <div class="breakdown-row">
+              <span><i class="mini-icon paid"></i>法定节日带薪放假</span>
+              <span id="leave-breakdown">0 ×1 = 0 天</span>
+            </div>
+            <div class="breakdown-row">
+              <span><i class="mini-icon holiday"></i>其他法定日工作增量</span>
+              <span id="holiday-breakdown">0 ×1 = 0 天</span>
+            </div>
+            <div class="breakdown-row">
+              <span><i class="mini-icon spring"></i>春节法定日工作增量</span>
+              <span id="spring-breakdown">0 ×2 = 0 天</span>
+            </div>
+          </div>
+
+          <div class="logic-note">
+            <strong>不会重复计薪</strong>
+            <p>
+              法定节日放假先计 1 份带薪报酬；如当天工作，再按实际工作份额增加：其他法定日 +1 倍，春节 +2 倍。半天则只增加一半。
+            </p>
+          </div>
+        </section>
+
+        <section class="source-card">
+          <div>
+            <p class="step-label">口径说明</p>
+            <h2>法定日，不等于调休长假</h2>
+          </div>
+          <p>
+            本工具按合同约定与现行《全国年节及纪念日放假办法》的 13 个法定日计算；周末、拼假和调休日不会自动获得法定日增量。
+            2027–2030 年农历节日按历法预置，届时仍可根据最新正式通知逐日调整。
+          </p>
+          <div class="source-links">
+            <a href="https://www.gov.cn/zhengce/content/202411/content_6986380.htm" target="_blank" rel="noreferrer">
+              查看现行放假办法 ↗
+            </a>
+            <a href="https://www.gov.cn/zhengce/zhengceku/202511/content_7047091.htm" target="_blank" rel="noreferrer">
+              查看 2026 官方安排 ↗
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-dialog-title">
+        <div class="share-dialog-header">
+          <div>
+            <p class="step-label">可直接转发</p>
+            <h2 id="share-dialog-title">工资确认图</h2>
+          </div>
+          <button class="dialog-close" id="share-close" type="button" aria-label="关闭确认图">关闭</button>
+        </div>
+        <p class="share-dialog-copy">图片包含实际支付金额、整月日历和完整计算公式。</p>
+        <div class="share-preview">
+          <canvas id="share-canvas" aria-label="工资确认图预览"></canvas>
+        </div>
+        <p class="share-status" id="share-status" aria-live="polite"></p>
+        <div class="share-dialog-actions">
+          <button class="secondary-button" id="share-download" type="button">下载 PNG</button>
+          <button class="primary-button" id="share-copy" type="button">复制图片</button>
+        </div>
+      </dialog>
+
+      <footer>
+        <p>让安排清楚，让相处轻松。</p>
+        <p>计算结果用于按当前合同约定核对，不替代专业法律或财税意见。</p>
+      </footer>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

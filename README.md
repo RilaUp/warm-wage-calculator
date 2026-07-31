@@ -2,7 +2,7 @@
 
 **Warm Wage · Salary Calculator for Household Workers**
 
-[中文说明](#中文说明) · [English](#english) · [在线体验 / Live Demo](https://salary-calculator-red.vercel.app)
+[中文说明](#中文说明) · [English](#english) · [在线体验 / Live Demo](https://lalabear.top/salary-calculator)
 
 ![暖薪工资计算器界面预览](assets/preview.png)
 

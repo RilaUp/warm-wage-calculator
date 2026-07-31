@@ -4,7 +4,7 @@
   "private": true,
   "description": "A bilingual, privacy-friendly salary calculator for household workers and employers.",
   "license": "MIT",
-  "homepage": "https://salary-calculator-red.vercel.app",
+  "homepage": "https://lalabear.top/salary-calculator",
   "type": "module",
   "scripts": {
     "test": "node --test",
