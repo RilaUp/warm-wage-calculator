@@ -201,6 +201,10 @@ This project supports payment review and communication under a specific agreemen
 
 Issues and pull requests are welcome. Please include tests when changing calculation logic, holiday dates, or multiplier behavior.
 
+## Site routing
+
+This repository owns the `lalabear.top` homepage and the `/salary-calculator` page. Research projects are maintained independently and exposed under `/work/studies/` through Vercel rewrites, so each study can keep its own source, release history, and deployment lifecycle.
+
 ## License
 
 [MIT](LICENSE)

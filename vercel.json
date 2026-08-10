@@ -1,6 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/work/studies/agentic-commerce-study/:path*",
+      "destination": "https://agentic-commerce-study.vercel.app/work/studies/agentic-commerce-study/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
