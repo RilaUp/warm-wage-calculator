@@ -1,4 +1,7 @@
 {
+  "buildCommand": "npm test",
+  "outputDirectory": ".",
+  "installCommand": "",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [

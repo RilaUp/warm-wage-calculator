@@ -18,6 +18,8 @@ The root page uses the public alias LALABEAR, with no personal name or employer 
 
 首页支持原生章节链接、键盘操作、可展开的设计理念及 reduced-motion。用现有 `npm test` 运行首页与计薪回归检查。
 
+Vercel serves this dependency-free static site from the repository root. Deployment runs `npm test` as its validation step; no generated build directory or `npm run build` script is required. Local Vercel configuration and environment credentials must remain untracked.
+
 ## 中文说明
 
 暖薪是一个面向家庭劳务工作者与雇主的开源工资计算器。它把每月的工作、休息和法定节假日安排放进一张清晰的月历，并按照约定的日劳务报酬与节日倍数计算实际应付金额。
