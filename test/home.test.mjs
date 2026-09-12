@@ -4,6 +4,16 @@ import { readFile, access } from "node:fs/promises";
 
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 
+test("study landing rewrite preserves the upstream directory URL before matching assets", async () => {
+  const config = JSON.parse(await readFile(new URL("../vercel.json", import.meta.url), "utf8"));
+  assert.equal(config.trailingSlash, false);
+  assert.deepEqual(config.rewrites[0], {
+    source: "/work/studies/agentic-commerce-study",
+    destination: "https://agentic-commerce-study.vercel.app/work/studies/agentic-commerce-study/",
+  });
+  assert.equal(config.rewrites[1].source, "/work/studies/agentic-commerce-study/:path*");
+});
+
 test("personal home preserves product entry points and has real section destinations", () => {
   assert.match(html, /href="\/salary-calculator\.html"/);
   assert.match(html, /href="https:\/\/rehab\.lalabear\.top\/"/);
