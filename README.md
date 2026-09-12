@@ -8,6 +8,16 @@
 
 ---
 
+## Personal home / 个人首页
+
+The root page uses the public alias LALABEAR, with no personal name or employer history. It introduces observations and the personal stories behind Warm Wage and ROUNDO, rather than a resume layout. Chinese is the default; `/?lang=en` opens the English edition. The language switch preserves the section anchor and stores the selection in the URL, not the calculator's local state. No portrait, private interview metrics, or unconfirmed hobbies are included.
+
+根页面使用公开网名 LALABEAR，移除个人名字、具体雇主与履历组合。使用独立的 `home.css`、`home.js` 和个人标记，不改变计薪样式、逻辑、存储或研究页面代理。暖薪入口保留在 `/salary-calculator`（本地静态服务器使用 `/salary-calculator.html`）。
+
+标记使用两个不同颜色的端点和一条有转折的连接线，表达理解不同视角、寻找共同路径并促成行动；不是星星装饰。母版为 `assets/lalabear-mark.svg`，页头、首页、页尾和 favicon 共用。网名不保证匿名：现有域名、产品链接、代码托管账号和历史内容仍可能关联现实身份；这轮未修改远端历史或其他网站。
+
+首页支持原生章节链接、键盘操作、可展开的设计理念及 reduced-motion。用现有 `npm test` 运行首页与计薪回归检查。
+
 ## 中文说明
 
 暖薪是一个面向家庭劳务工作者与雇主的开源工资计算器。它把每月的工作、休息和法定节假日安排放进一张清晰的月历，并按照约定的日劳务报酬与节日倍数计算实际应付金额。
@@ -89,7 +99,9 @@ npm test
 ### 项目结构
 
 ```text
-index.html          页面结构
+index.html          双语个人首页
+home.css / home.js  首页样式与语言切换
+salary-calculator.html  计薪页面结构
 styles.css          响应式视觉样式
 app.js              页面交互与本地状态
 calc.mjs            节日数据与计薪核心
